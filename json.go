@@ -25,10 +25,15 @@ func (c *Conn) WriteJSON(v interface{}) error {
 	if err != nil {
 		return err
 	}
-	err1 := json.NewEncoder(w).Encode(v)
+	b, err := json.Marshal(v)
+	if err != nil {
+		w.Close()
+		return err
+	}
+	_, err = w.Write(b)
 	err2 := w.Close()
-	if err1 != nil {
-		return err1
+	if err != nil {
+		return err
 	}
 	return err2
 }
